@@ -1,0 +1,26 @@
+version: '3.9'
+services: 
+
+  mongo:
+    hostname: 'mongo'
+    container_name: 'mongo'
+    image: 'mongo:4.2'
+    restart: 'on-failure'
+    command: ['-f', '/etc/mongod.conf', '--replSet', 'rs0', '--bind_ip_all']
+    expose:
+      - 27017
+    ports:
+      - 27020:27017
+    volumes: 
+      - ./.mongo/data:/data/db
+      - ./.mongo/log:/var/log/mongodb
+      - ./.mongo/mongod.conf:/etc/mongod.conf
+#    networks: 'mongo-sync'
+
+#   sync:
+#     container_name: 'mongo-sync'
+#     image: 'python:3.8'
+#     restart: 'on-failure'
+#     networks: 'mongo-sync'
+
+# networks: 'mongo-sync'
