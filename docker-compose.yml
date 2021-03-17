@@ -15,12 +15,20 @@ services:
       - ./.mongo/data:/data/db
       - ./.mongo/log:/var/log/mongodb
       - ./.mongo/mongod.conf:/etc/mongod.conf
-#    networks: 'mongo-sync'
+    networks:
+      - mongo-sync
 
-#   sync:
-#     container_name: 'mongo-sync'
-#     image: 'python:3.8'
-#     restart: 'on-failure'
-#     networks: 'mongo-sync'
+  sync:
+     container_name: 'mongo-sync'
+     build:
+       context: .
+     restart: 'on-failure'
+     networks:
+      - mongo-sync
+     command: >
+       sh -c "python app.py"
+     depends_on:
+       - mongo
 
-# networks: 'mongo-sync'
+networks:
+  mongo-sync:

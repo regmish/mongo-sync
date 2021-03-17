@@ -2,7 +2,7 @@ from pymongo import errors, MongoClient
 # from bson.json_util import dumps
 import os, sys
 
-DB_URI = os.getenv('DB_URI') or 'mongodb://localhost:27020'
+DB_URI = os.getenv('DB_URI') or 'mongodb://mongo:27017'
 
 
 def watch_changes(db_client, collections):
