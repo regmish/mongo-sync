@@ -1,36 +1,36 @@
-version: '3.9'
-services: 
-
+version: "3.9"
+services:
   mongo:
-    hostname: 'mongo'
-    container_name: 'mongo'
-    image: 'mongo:4.2'
-    restart: 'on-failure'
-    command: ['-f', '/etc/mongod.conf', '--replSet', 'rs0', '--bind_ip_all']
+    hostname: "mongo"
+    container_name: "mongo"
+    image: "mongo:4.2"
+    restart: "on-failure"
+    command: ["-f", "/etc/mongod.conf", "--replSet", "rs0", "--bind_ip_all"]
     expose:
       - 27017
     ports:
       - 27020:27017
-    volumes: 
+    volumes:
       - ./.mongo/data:/data/db
       - ./.mongo/log:/var/log/mongodb
+      - ./.mongo/init/:/docker-entrypoint-initdb.d/
       - ./.mongo/mongod.conf:/etc/mongod.conf
     networks:
-      - mongo-sync
-    healthcheck:
-      test: test $$(echo "rs.initiate().ok" | mongo )
+      - sync
 
-  sync:
-     container_name: 'mongo-sync'
-     build:
-       context: .
-     restart: 'on-failure'
-     networks:
-      - mongo-sync
-     command: >
-       sh -c "python app.py"
-     depends_on:
-       - mongo
+  app:
+    hostname: "app"
+    container_name: "app"
+    build:
+      context: .
+    restart: "on-failure"
+    entrypoint: ["python", "app.py"]
+    environment: 
+      - DB_URI=mongodb://mongo:27017
+    depends_on:
+      - mongo
+    networks:
+      - sync
 
 networks:
-  mongo-sync:
+  sync:
