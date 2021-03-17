@@ -17,6 +17,8 @@ services:
       - ./.mongo/mongod.conf:/etc/mongod.conf
     networks:
       - mongo-sync
+    healthcheck:
+      test: test $$(echo "rs.initiate().ok" | mongo )
 
   sync:
      container_name: 'mongo-sync'
