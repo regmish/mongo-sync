@@ -1,6 +1,5 @@
 from pymongo import errors, MongoClient
-# from bson.json_util import dumps
-import os, sys
+import os
 
 DB_URI = os.getenv('DB_URI') or 'mongodb://mongo:27017'
 

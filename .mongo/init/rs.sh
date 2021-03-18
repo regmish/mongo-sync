@@ -1,11 +1,7 @@
 #!/bin/bash
-
 echo "**********************************************"
-echo "Waiting for startup.."
-sleep 10
-echo "done"
-
+echo "Running Mongo startup script ..."
+sleep 5
 mongo <<EOF
 rs.initiate();
-rs.status();
 EOF

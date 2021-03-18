@@ -1,4 +1,8 @@
 version: "3.9"
+
+networks:
+  mongo-sync:
+
 services:
   mongo:
     hostname: "mongo"
@@ -15,22 +19,38 @@ services:
       - ./.mongo/log:/var/log/mongodb
       - ./.mongo/init/:/docker-entrypoint-initdb.d/
       - ./.mongo/mongod.conf:/etc/mongod.conf
+    healthcheck:
+      test: test $$(echo "rs.status().ok" | mongo --quiet) -eq 1
+      interval: 30s
+      start_period: 60s
     networks:
-      - sync
+      - mongo-sync
 
   app:
     hostname: "app"
     container_name: "app"
     build:
-      context: .
+      context: ./app
     restart: "on-failure"
-    entrypoint: ["python", "app.py"]
+    environment:
+      - DB_URI=mongodb://mongo:27017
+      - PORT=3030
+    ports:
+      - 3030:3030
+    depends_on:
+      - mongo
+    networks:
+      - mongo-sync
+
+  streamer:
+    hostname: "streamer"
+    container_name: "streamer"
+    build:
+      context: ./streamer
+    restart: "on-failure"
     environment: 
       - DB_URI=mongodb://mongo:27017
     depends_on:
       - mongo
     networks:
-      - sync
-
-networks:
-  sync:
+      - mongo-sync

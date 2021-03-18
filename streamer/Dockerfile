@@ -4,5 +4,8 @@ ENV PYTHONUNBUFFERED 1
 
 WORKDIR /usr/src/app
 
-COPY app.py ./
+COPY run.py ./
+
 RUN pip install --no-cache-dir pymongo
+
+CMD ["python", "run.py"]
